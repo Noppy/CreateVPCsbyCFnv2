@@ -209,8 +209,8 @@ Resources:
           Value:
             Fn::If:
               - CheckEnvironment
-              - !Sub ${EnvironmentName}-${Subnet1Name}
-              - !Sub ${Subnet1Name}
+              - !Sub ${EnvironmentName}-${VpcName}-${Subnet1Name}
+              - !Sub ${VpcName}-${Subnet1Name}
         - Key: Environment
           Value: !Ref EnvironmentName
   Subnet2:
@@ -231,8 +231,8 @@ Resources:
           Value:
             Fn::If:
               - CheckEnvironment
-              - !Sub ${EnvironmentName}-${Subnet2Name}
-              - !Sub ${Subnet2Name}
+              - !Sub ${EnvironmentName}-${VpcName}-${Subnet2Name}
+              - !Sub ${VpcName}-${Subnet2Name}
         - Key: Environment
           Value: !Ref EnvironmentName
   #------------------ Route Table
@@ -243,7 +243,11 @@ Resources:
       VpcId: !Ref Vpc
       Tags:
         - Key: Name
-          Value: !Sub ${VpcName}-PubSubRouteTable
+          Value:
+            Fn::If:
+              - CheckEnvironment
+              - !Sub ${EnvironmentName}-${VpcName}-PubSubRouteTable
+              - !Sub ${VpcName}-PubSubRouteTable
         - Key: Environment
           Value: !Ref EnvironmentName
   VpcInternetRote:
