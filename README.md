@@ -47,14 +47,3 @@ aws --profile ${PROFILE} cloudformation create-stack \
     - DnsHostnames : VPCのDnsHostnamesの有効・無効設定
     - VpcInternalDnsNameEnable : Private Hosted Zoneの作成有無(true:作成する、false:作成しない。デフォルトfalse)
 
-# 複合型VPC作成のCloudFormationテンプレート
-４つのサブネットを持つInternalVPCと、Internetフェンシングする2サブネットを持つExternalVPCを作成し、VPC Peeringで接続する構成です。
-<img src="./Documents/arch1.png" whdth=500>
-
-利用方法
-```shell
-aws --profile ${PROFILE} cloudformation create-stack \
-    --stack-name VPC \
-    --template-body "file://./2VPCEnvironment/2vpc_2subnet-4subnets.yaml" \
-    --capabilities CAPABILITY_IAM ;
-```
