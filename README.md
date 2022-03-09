@@ -4,12 +4,16 @@ VPC環境作成用の、CloudFormation テンプレート
 # 単一VPC作成のCloudFormationテンプレート
 テンプレートは以下の３種類あります。
 - サブネットタイプが１種類の構成
-  - 2AZ、2サブネット(Publicサブネット x 2)構成のVPC・・・`vpc-2az-2subnets.yaml`
+  - 2AZ、2サブネットVPC: `vpc-2az-2subnets.yaml`
+    - Publicサブネット x 2
 - サブネットタイプが2種類の構成
-  - 2AZ、4サブネット(Publicサブネット x 2、Privateサブネット x 2)構成のVPC・・・`vpc-2az-4subnets.yaml`
-  - 3AZ、6サブネット(Publicサブネット x 3、Privateサブネット x 3)構成のVPC・・・`vpc-3az-6subnets.yaml`
+  - 2AZ、4サブネットVPC: `vpc-2az-4subnets.yaml`
+    - Publicサブネット x 2、Privateサブネット x 2
+  - 3AZ、6サブネットVPC: `vpc-3az-6subnets.yaml`
+    - Publicサブネット x 3、Privateサブネット x 3
 - サブネットタイプが3種類の構成
-  - 2AZ、6サブネット(Publicサブネット x 2、Privateサブネット x 2、TransitGWサブネット x 2)構成のVPC・・・`vpc-2az-6subnets.yaml`
+  - 2AZ、6サブネットVPC: `vpc-2az-6subnets.yaml`
+    - Publicサブネット x 2、Privateサブネット x 2、TransitGWサブネット x 2
 
 4サブネット(IGWあり、NATGatewayなしパターンのスタック作成例)
 ```shell
