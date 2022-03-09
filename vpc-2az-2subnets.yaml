@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Deploy a VPC and 2 subnets
+Description: Create a VPC with ２ subnet configurations in 2AZ
 #----------------------------------------------
 Parameters:
   #------------------

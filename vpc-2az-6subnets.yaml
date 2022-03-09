@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Create a VPC with 6 subnet configurations in ３AZ
+Description: Create a VPC with 6 subnet configurations in 2AZ
 #----------------------------------------------
 Parameters:
   #------------------
@@ -105,21 +105,6 @@ Parameters:
     AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
     ConstraintDescription: Must be like 10.1.1.0/24
   #---
-  PublicSubnet3Name:
-    Description: Name for the Public Subnet 3
-    Type: String
-    Default: PublicSub3
-    AllowedPattern: "[a-zA-Z0-9=-_].*"
-    ConstraintDescription: Can contain only ASCII characters.
-  PublicSubnet3Cidr:
-    Description: CIDR Block for the  pubulic subnet 3
-    Type: String
-    MinLength: 9
-    MaxLength: 18
-    Default: 10.1.31.0/24
-    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
-    ConstraintDescription: Must be like 10.1.1.0/24
-  #---
   PrivateSubnet1Name:
     Description: Name for the Private Subnet 1
     Type: String
@@ -150,21 +135,36 @@ Parameters:
     AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
     ConstraintDescription: Must be like 10.1.1.0/24
   #---
-  PrivateSubnet3Name:
-    Description: Name for the Private Subnet 3
+  TgwSubnet1Name:
+    Description: Name for the Transit Gateway Subnet 1
     Type: String
-    Default: PrivateSub3
+    Default: TgwSub1
     AllowedPattern: "[a-zA-Z0-9=-_].*"
     ConstraintDescription: Can contain only ASCII characters.
-  PrivateSubnet3Cidr:
-    Description: CIDR Block for the  private subnet 3
+  TgwSubnet1Cidr:
+    Description: CIDR Block for the  private subnet 1
     Type: String
     MinLength: 9
     MaxLength: 18
-    Default: 10.1.224.0/19
+    Default: 10.1.224.0/24
     AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
     ConstraintDescription: Must be like 10.1.1.0/24
-    #---
+  #---
+  TgwSubnet2Name:
+    Description: Name for the Transit Gateway Subnet 1
+    Type: String
+    Default: TgwSub2
+    AllowedPattern: "[a-zA-Z0-9=-_].*"
+    ConstraintDescription: Can contain only ASCII characters.
+  TgwSubnet2Cidr:
+    Description: CIDR Block for the  private subnet 2
+    Type: String
+    MinLength: 9
+    MaxLength: 18
+    Default: 10.1.240.0/24
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription: Must be like 10.1.1.0/24
+  #---
   EnvironmentName:
     Description: If you do not give an environment name, do not enter anything.
     Type: String
@@ -204,14 +204,14 @@ Metadata:
           - PublicSubnet1Cidr
           - PublicSubnet2Name
           - PublicSubnet2Cidr
-          - PublicSubnet3Name
-          - PublicSubnet3Cidr
           - PrivateSubnet1Name
           - PrivateSubnet1Cidr
           - PrivateSubnet2Name
           - PrivateSubnet2Cidr
-          - PrivateSubnet3Name
-          - PrivateSubnet3Cidr
+          - TgwSubnet1Name
+          - TgwSubnet1Cidr
+          - TgwSubnet2Name
+          - TgwSubnet2Cidr
       -
         Label:
           default: "Private Hosted zone"
@@ -361,28 +361,6 @@ Resources:
               - !Sub ${VpcName}-${PublicSubnet2Name}
         - Key: Environment
           Value: !Ref EnvironmentName
-  PublicSubnet3:
-    Type: AWS::EC2::Subnet
-    Properties:
-      CidrBlock: !Ref PublicSubnet3Cidr
-      VpcId: !Ref Vpc
-      AvailabilityZone: !Select
-      - 2
-      - Fn::GetAZs: !Ref 'AWS::Region'
-      MapPublicIpOnLaunch:
-        Fn::If:
-          - CheckInternetAccess
-          - true
-          - false
-      Tags:
-        - Key: Name
-          Value:
-            Fn::If:
-              - CheckEnvironment
-              - !Sub ${EnvironmentName}-${VpcName}-${PublicSubnet3Name}
-              - !Sub ${VpcName}-${PublicSubnet3Name}
-        - Key: Environment
-          Value: !Ref EnvironmentName
   PrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -419,13 +397,13 @@ Resources:
               - !Sub ${VpcName}-${PrivateSubnet2Name}
         - Key: Environment
           Value: !Ref EnvironmentName
-  PrivateSubnet3:
+  TgwSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
-      CidrBlock: !Ref PrivateSubnet3Cidr
+      CidrBlock: !Ref TgwSubnet1Cidr
       VpcId: !Ref Vpc
       AvailabilityZone: !Select
-      - 2
+      - 0
       - Fn::GetAZs: !Ref 'AWS::Region'
       MapPublicIpOnLaunch: false
       Tags:
@@ -433,8 +411,26 @@ Resources:
           Value:
             Fn::If:
               - CheckEnvironment
-              - !Sub ${EnvironmentName}-${VpcName}-${PrivateSubnet3Name}
-              - !Sub ${VpcName}-${PrivateSubnet3Name}
+              - !Sub ${EnvironmentName}-${VpcName}-${TgwSubnet1Name}
+              - !Sub ${VpcName}-${TgwSubnet1Name}
+        - Key: Environment
+          Value: !Ref EnvironmentName
+  TgwSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: !Ref TgwSubnet2Cidr
+      VpcId: !Ref Vpc
+      AvailabilityZone: !Select
+      - 1
+      - Fn::GetAZs: !Ref 'AWS::Region'
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value:
+            Fn::If:
+              - CheckEnvironment
+              - !Sub ${EnvironmentName}-${VpcName}-${TgwSubnet2Name}
+              - !Sub ${VpcName}-${TgwSubnet2Name}
         - Key: Environment
           Value: !Ref EnvironmentName
   #------------------ Nat GW
@@ -485,32 +481,6 @@ Resources:
         - Key: Environment
           Value: !Ref EnvironmentName
   EipNatGw2:
-    Type: AWS::EC2::EIP
-    Condition: CreateNatGWs
-    Properties:
-      Domain: vpc
-  #---
-  NatGw3:
-    Type: AWS::EC2::NatGateway
-    Condition: CreateNatGWs
-    DependsOn: AttachIgw
-    Properties:
-      AllocationId:
-        Fn::GetAtt:
-        - EipNatGw3
-        - AllocationId
-      SubnetId:
-        Ref: PublicSubnet3
-      Tags:
-        - Key: Name
-          Value:
-            Fn::If:
-              - CheckEnvironment
-              - !Sub ${EnvironmentName}-${VpcName}-NatGW3
-              - !Sub ${VpcName}-NatGW3
-        - Key: Environment
-          Value: !Ref EnvironmentName
-  EipNatGw3:
     Type: AWS::EC2::EIP
     Condition: CreateNatGWs
     Properties:
@@ -582,7 +552,7 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       NatGatewayId: !Ref NatGw2
   #----
-  PrivateSubnet3RouteTable:
+  TgwSubnet1RouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref Vpc
@@ -591,17 +561,24 @@ Resources:
           Value:
             Fn::If:
               - CheckEnvironment
-              - !Sub ${EnvironmentName}-${VpcName}-PrivateSubRouteTable3
-              - !Sub ${VpcName}-PrivateSubRouteTable3
+              - !Sub ${EnvironmentName}-${VpcName}-TgwSubnet1RouteTable
+              - !Sub ${VpcName}-TgwSubnet1RouteTable
         - Key: Environment
           Value: !Ref EnvironmentName
-  VpcNatGw3Rote:
-    Type: AWS::EC2::Route
-    Condition: CreateNatGWs
+  #----
+  TgwSubnet2RouteTable:
+    Type: AWS::EC2::RouteTable
     Properties:
-      RouteTableId: !Ref PrivateSubnet3RouteTable
-      DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref NatGw3
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: Name
+          Value:
+            Fn::If:
+              - CheckEnvironment
+              - !Sub ${EnvironmentName}-${VpcName}-TgwSubnet2RouteTable
+              - !Sub ${VpcName}-TgwSubnet2RouteTable
+        - Key: Environment
+          Value: !Ref EnvironmentName
   #---- Attache to subnets in the  VPC
   PublicSubnetRouteTableAssociationPublicSubnet1:
     Type: AWS::EC2::SubnetRouteTableAssociation
@@ -612,11 +589,6 @@ Resources:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref PublicSubnet2
-      RouteTableId: !Ref PublicSubnetRouteTable
-  PublicSubnetRouteTableAssociationPublicSubnet3:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref PublicSubnet3
       RouteTableId: !Ref PublicSubnetRouteTable
   #----
   PrivateSubnet1RouteTableAssociationPrivateSubnet1:
@@ -629,11 +601,17 @@ Resources:
     Properties:
       SubnetId: !Ref PrivateSubnet2
       RouteTableId: !Ref PrivateSubnet2RouteTable
-  PrivateSubnet2RouteTableAssociationPrivateSubnet3:
+  #----
+  TgwSubnet1RouteTableAssociationTgwSubnet1:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref PrivateSubnet3
-      RouteTableId: !Ref PrivateSubnet3RouteTable
+      SubnetId: !Ref TgwSubnet1
+      RouteTableId: !Ref TgwSubnet1RouteTable 
+  TgwSubnet2RouteTableAssociationTgwSubnet2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref TgwSubnet2
+      RouteTableId: !Ref TgwSubnet2RouteTable 
   #------------------ Local Domain Name
   VpcInternalDns:
     Type: AWS::Route53::HostedZone
@@ -677,11 +655,6 @@ Outputs:
     Value: !Ref PublicSubnet2
     Export:
       Name: !Sub "${AWS::StackName}-PublicSubnet2Id"
-  PublicSubnet3Id:
-    Description: Public Subnet3 ID in the VPC
-    Value: !Ref PublicSubnet3
-    Export:
-      Name: !Sub "${AWS::StackName}-PublicSubnet3Id"
   PrivateSubnet1Id:
     Description: Private Subnet1 ID in the VPC
     Value: !Ref PrivateSubnet1
@@ -692,11 +665,16 @@ Outputs:
     Value: !Ref PrivateSubnet2
     Export:
       Name: !Sub "${AWS::StackName}-PrivateSubnet2Id"
-  PrivateSubnet3Id:
-    Description: Private Subnet3 ID in the VPC
-    Value: !Ref PrivateSubnet3
+  TgwSubnet1Id:
+    Description: Tgw Subnet1 ID in the VPC
+    Value: !Ref TgwSubnet1
     Export:
-      Name: !Sub "${AWS::StackName}-PrivateSubnet3Id"
+      Name: !Sub "${AWS::StackName}-TgwSubnet1Id"
+  TgwSubnet2Id:
+    Description: Tgw Subnet2 ID in the VPC
+    Value: !Ref TgwSubnet2
+    Export:
+      Name: !Sub "${AWS::StackName}-TgwSubnet2Id"
   #------------------ Subnet CIDR
   PublicSubnet1Cidr:
     Description: CIDR of Public Subnet1 in the VPC
@@ -708,11 +686,6 @@ Outputs:
     Value: !Ref PublicSubnet2Cidr
     Export:
       Name: !Sub "${AWS::StackName}-PublicSubnet2Cidr"
-  PublicSubnet3Cidr:
-    Description: CIDR of Public Subnet3 in the VPC
-    Value: !Ref PublicSubnet3Cidr
-    Export:
-      Name: !Sub "${AWS::StackName}-PublicSubnet3Cidr"
   PrivateSubnet1Cidr:
     Description: CIDR of Private Subnet1 in the VPC
     Value: !Ref PrivateSubnet1Cidr
@@ -723,11 +696,16 @@ Outputs:
     Value: !Ref PrivateSubnet2Cidr
     Export:
       Name: !Sub "${AWS::StackName}-PrivateSubnet2Cidr"
-  PrivateSubnet3Cidr:
-    Description: CIDR of Private Subnet3 in the VPC
-    Value: !Ref PrivateSubnet3Cidr
+  TgwSubnet1Cidr:
+    Description: CIDR of Tgw Subnet1 in the VPC
+    Value: !Ref TgwSubnet1Cidr
     Export:
-      Name: !Sub "${AWS::StackName}-PrivateSubnet3Cidr"
+      Name: !Sub "${AWS::StackName}-TgwSubnet1Cidr"
+  TgwSubnet2Cidr:
+    Description: CIDR of Tgw Subnet2 in the VPC
+    Value: !Ref TgwSubnet2Cidr
+    Export:
+      Name: !Sub "${AWS::StackName}-TgwSubnet2Cidr"
   #------------------ route tables
   PublicSubnetRouteTableId:
     Description: Route table for Public Subnet
@@ -744,11 +722,16 @@ Outputs:
     Value: !Ref PrivateSubnet2RouteTable
     Export:
       Name: !Sub "${AWS::StackName}-PrivateSubnet2RouteTableId"
-  PrivateSubnet3RouteTableId:
-    Description: Route table for Private Subnet3
-    Value: !Ref PrivateSubnet3RouteTable
+  TgwSubnet1RouteTableId:
+    Description: Route table for Tgw Subnet1
+    Value: !Ref TgwSubnet1RouteTable
     Export:
-      Name: !Sub "${AWS::StackName}-PrivateSubnet3RouteTableId"
+      Name: !Sub "${AWS::StackName}-TgwSubnet1RouteTableId"
+  TgwSubnet2RouteTableId:
+    Description: Route table for Tgw Subnet2
+    Value: !Ref TgwSubnet2RouteTable
+    Export:
+      Name: !Sub "${AWS::StackName}-TgwSubnet2RouteTableId"
   #------------------ Resource DNS name
   VpcInternalDnsName:
     Description: Resource DNS zone name in the  Vpc
