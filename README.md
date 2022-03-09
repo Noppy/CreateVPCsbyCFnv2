@@ -15,7 +15,7 @@ VPC環境作成用の、CloudFormation テンプレート
   - 2AZ、6サブネットVPC: `vpc-2az-6subnets.yaml`
     - Publicサブネット x 2、Privateサブネット x 2、TransitGWサブネット x 2
 
-#　作成例
+# 作成例
 4サブネット(IGWあり、NATGatewayなしパターンのスタック作成例)
 ```shell
 CFN_STACK_PARAMETERS='
