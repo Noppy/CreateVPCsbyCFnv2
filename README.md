@@ -2,7 +2,7 @@
 VPC環境作成用の、CloudFormation テンプレート
 
 # 単一VPC作成のCloudFormationテンプレート
-テンプレートは以下の３種類あります。
+テンプレートは以下の4種類あります。
 - サブネットタイプが１種類の構成
   - 2AZ、2サブネットVPC: `vpc-2az-2subnets.yaml`
     - Publicサブネット x 2
@@ -15,6 +15,7 @@ VPC環境作成用の、CloudFormation テンプレート
   - 2AZ、6サブネットVPC: `vpc-2az-6subnets.yaml`
     - Publicサブネット x 2、Privateサブネット x 2、TransitGWサブネット x 2
 
+#　作成例
 4サブネット(IGWあり、NATGatewayなしパターンのスタック作成例)
 ```shell
 CFN_STACK_PARAMETERS='
