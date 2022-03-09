@@ -3,9 +3,13 @@ VPC環境作成用の、CloudFormation テンプレート
 
 # 単一VPC作成のCloudFormationテンプレート
 テンプレートは以下の３種類あります。
-- 2subnets in a VPC
-- 4subnets in a VPC
-- 6subnets in a VPC
+- サブネットタイプが１種類の構成
+  - 2AZ、2サブネット(Publicサブネット x 2)構成のVPC・・・`vpc-2az-2subnets.yaml`
+- サブネットタイプが2種類の構成
+  - 2AZ、4サブネット(Publicサブネット x 2、Privateサブネット x 2)構成のVPC・・・`vpc-2az-4subnets.yaml`
+  - 3AZ、6サブネット(Publicサブネット x 3、Privateサブネット x 3)構成のVPC・・・`vpc-3az-6subnets.yaml`
+- サブネットタイプが3種類の構成
+  - 2AZ、6サブネット(Publicサブネット x 2、Privateサブネット x 2、TransitGWサブネット x 2)構成のVPC・・・`vpc-2az-6subnets.yaml`
 
 4サブネット(IGWあり、NATGatewayなしパターンのスタック作成例)
 ```shell
@@ -35,7 +39,7 @@ CFN_STACK_PARAMETERS='
 
 aws --profile ${PROFILE} cloudformation create-stack \
     --stack-name VPC \
-    --template-body "file://./vpc-4subnets.yaml" \
+    --template-body "file://./vpc-2az-4subnets.yaml" \
     --parameters "${CFN_STACK_PARAMETERS}" \
     --capabilities CAPABILITY_IAM ;
 ```
