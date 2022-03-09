@@ -34,7 +34,7 @@ Parameters:
   VpcName:
     Description: Name for the VPC
     Type: String
-    AllowedPattern: "[a-zA-Z0-9=-@+?[?]?<?>._]*"
+    AllowedPattern: "[a-zA-Z0-9=-_].*"
     Default: MainVPC
     ConstraintDescription: Can contain only ASCII characters.
   VpcCidr:
@@ -79,7 +79,7 @@ Parameters:
     Description: Name for the Public Subnet 1
     Type: String
     Default: PublicSub1
-    AllowedPattern: "[a-zA-Z0-9=-@+?[?]?<?>._]*"
+    AllowedPattern: "[a-zA-Z0-9=-_].*"
     ConstraintDescription: Can contain only ASCII characters.
   PublicSubnet1Cidr:
     Description: CIDR Block for the  pubulic subnet 1
@@ -94,7 +94,7 @@ Parameters:
     Description: Name for the Public Subnet 2
     Type: String
     Default: PublicSub2
-    AllowedPattern: "[a-zA-Z0-9=-@+?[?]?<?>._]*"
+    AllowedPattern: "[a-zA-Z0-9=-_].*"
     ConstraintDescription: Can contain only ASCII characters.
   PublicSubnet2Cidr:
     Description: CIDR Block for the  pubulic subnet 2
@@ -109,7 +109,7 @@ Parameters:
     Description: Name for the Private Subnet 1
     Type: String
     Default: PrivateSub1
-    AllowedPattern: "[a-zA-Z0-9=-@+?[?]?<?>._]*"
+    AllowedPattern: "[a-zA-Z0-9=-_].*"
     ConstraintDescription: Can contain only ASCII characters.
   PrivateSubnet1Cidr:
     Description: CIDR Block for the  private subnet 1
@@ -124,7 +124,7 @@ Parameters:
     Description: Name for the Private Subnet 2
     Type: String
     Default: PrivateSub2
-    AllowedPattern: "[a-zA-Z0-9=-@+?[?]?<?>._]*"
+    AllowedPattern: "[a-zA-Z0-9=-_].*"
     ConstraintDescription: Can contain only ASCII characters.
   PrivateSubnet2Cidr:
     Description: CIDR Block for the  private subnet 2

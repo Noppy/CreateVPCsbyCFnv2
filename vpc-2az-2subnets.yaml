@@ -27,7 +27,7 @@ Parameters:
   VpcName:
     Description: Name for the VPC
     Type: String
-    AllowedPattern: "[a-zA-Z0-9=-@+?[?]?<?>._]*"
+    AllowedPattern: "[a-zA-Z0-9=-_].*"
     Default: MainVPC
     ConstraintDescription: Can contain only ASCII characters.
   VpcCidr:
@@ -72,7 +72,7 @@ Parameters:
     Description: Name for the Subnet 1
     Type: String
     Default: Sub1
-    AllowedPattern: "[a-zA-Z0-9=-@+?[?]?<?>._]*"
+    AllowedPattern: "[a-zA-Z0-9=-_].*"
     ConstraintDescription: Can contain only ASCII characters.
   Subnet1Cidr:
     Description: CIDR Block for the subnet 1
@@ -87,7 +87,7 @@ Parameters:
     Description: Name for the Subnet 2
     Type: String
     Default: Sub2
-    AllowedPattern: "[a-zA-Z0-9=-@+?[?]?<?>._]*"
+    AllowedPattern: "[a-zA-Z0-9=-_].*"
     ConstraintDescription: Can contain only ASCII characters.
   Subnet2Cidr:
     Description: CIDR Block for the subnet 2
